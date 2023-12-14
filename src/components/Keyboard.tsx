@@ -2,6 +2,7 @@ import styles from './Keyboard.module.css';
 
 
 type KeyboardProps = {
+    disabled?: boolean,
     activeLetters: string[]
     inactiveLetters: string[]
     addGuessedLetter: (letter: string)  => void
@@ -36,7 +37,7 @@ const KEYS = [
     "z",
 ]
 
-export function Keyboard({ activeLetters, inactiveLetters, addGuessedLetter }:KeyboardProps) {
+export function Keyboard({ disabled = false, activeLetters, inactiveLetters, addGuessedLetter }:KeyboardProps) {
     return <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(75px, 1fr))",
@@ -49,7 +50,7 @@ export function Keyboard({ activeLetters, inactiveLetters, addGuessedLetter }:Ke
                     onClick={() => addGuessedLetter(key)} 
                     className={`${styles.btn} ${isActive ? styles.active : ""}
                     ${isInactive ? styles.inactive : ""}`}
-                    disabled={isInactive || isActive} 
+                    disabled={isInactive || isActive || disabled} 
                     key={key}
                     >
                 {key}

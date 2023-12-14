@@ -15,13 +15,18 @@ function App() {
   const incorrectLetters = guessedLetters.filter(letter => 
     !wordToGuess.includes(letter));
 
+    const isLoser = incorrectLetters.length >= 6;
+    const isWinner = wordToGuess
+      .split("")
+      .every(letter => guessedLetters.includes(letter));
+
     const addGuessedLetter = useCallback((letter: string) => {
-      if (guessedLetters.includes(letter)){
+      if (guessedLetters.includes(letter) || isLoser || isWinner){
         return
       } else {
         setGuessedLetters(prev => [...prev, letter]);
       }
-    }, [guessedLetters])
+    }, [guessedLetters, isWinner, isLoser])
 
   
 
@@ -44,6 +49,10 @@ function App() {
     }
   }, [guessedLetters])
 
+  const handleReplay = () => {
+    window.location.reload()
+  }
+
   return (
     <div style={{
       maxWidth: "800px",
@@ -57,15 +66,31 @@ function App() {
         fontSize: "2rem",
         textAlign: "center"
       }}>
-        Lose
-        Win
+        {isWinner && <h2>You win!</h2>}
+        {isLoser && <h2>Better luck next time!</h2>}
+        {isWinner || isLoser ? 
+          <button onClick={handleReplay}
+            style={{
+              height: "70px",
+              width: "70px",
+              borderRadius: "100%",
+              textTransform: "uppercase",
+              fontWeight: "bold",
+              cursor: "pointer"
+            }}
+          >
+            Play again
+          </button>
+          : null
+        }
       </div>
       <HangmanDrawing numberOfGuesses={incorrectLetters.length}/>
-      <HangmanWord guessedLetters={guessedLetters} wordToGuess={wordToGuess}/>
+      <HangmanWord reveal={isLoser} guessedLetters={guessedLetters} wordToGuess={wordToGuess}/>
       <div style={{
         alignSelf: "stretch"
       }}>
         <Keyboard 
+          disabled={isWinner || isLoser}
           activeLetters={guessedLetters.filter(letter => wordToGuess.includes(letter))}
           inactiveLetters={incorrectLetters}
           addGuessedLetter={addGuessedLetter}
